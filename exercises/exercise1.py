@@ -44,10 +44,11 @@ def convert_types(airports_df: pd.DataFrame) -> list[dict]:
 
 
 def save_data(airports: list[dict]):
-    with Session.begin() as session:
-        for airport_dict in airports:
-            airport = Airport(**airport_dict)
-            session.add(airport)
+    session = Session()
+    for airport_dict in airports:
+        airport = Airport(**airport_dict)
+        session.add(airport)
+    session.commit()
 
 
 if __name__ == '__main__':
