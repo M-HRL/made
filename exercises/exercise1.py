@@ -14,7 +14,6 @@ Base = declarative_base()
 
 class Airport(Base):
     __tablename__ = "airports"
-    column_0 = Column(Integer, primary_key=True, autoincrement=True)
     column_1 = Column(Integer)
     column_2 = Column(Text(100))
     column_3 = Column(Text(50))
@@ -28,6 +27,12 @@ class Airport(Base):
     column_11 = Column(Text(10))
     column_12 = Column(Text(50))
     geo_punkt = Column(Text(50))
+    __mapper_args__ = {
+        "primary_key": [
+            column_1, column_2, column_3, column_4, column_5, column_6, column_7, column_8, column_9, column_10,
+            column_11, column_12, geo_punkt
+        ],
+    }
 
 
 def load_data() -> pd.DataFrame:
