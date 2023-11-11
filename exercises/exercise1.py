@@ -7,13 +7,9 @@ from sqlalchemy import (
 )
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.orm import Session
 
 Base = declarative_base()
-conn_string = "sqlite:///airports.sqlite"
-engine = create_engine(conn_string)
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
 
 
 class Airport(Base):
@@ -44,11 +40,14 @@ def convert_types(airports_df: pd.DataFrame) -> list[dict]:
 
 
 def save_data(airports: list[dict]):
-    session = Session()
-    for airport_dict in airports:
-        airport = Airport(**airport_dict)
-        session.add(airport)
-    session.commit()
+    conn_string = "sqlite:///airports.sqlite"
+    engine = create_engine(conn_string, echo=True, future=True)
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        for airport_dict in airports:
+            airport = Airport(**airport_dict)
+            session.add(airport)
+        session.commit()
 
 
 if __name__ == '__main__':
