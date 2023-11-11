@@ -14,7 +14,7 @@ Base = declarative_base()
 
 class Airport(Base):
     __tablename__ = "airports"
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    column_0 = Column(Integer, primary_key=True, autoincrement=True)
     column_1 = Column(Integer)
     column_2 = Column(Text(100))
     column_3 = Column(Text(50))
