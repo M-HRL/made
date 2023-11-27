@@ -30,7 +30,7 @@ pipeline TrainstopsPipeline {
 
     block TrainstopsLoader oftype SQLiteLoader {
         table: "trainstops";
-        file: "./data/trainstops.sqlite";
+        file: "./trainstops.sqlite";
     }
 
     valuetype VerkehrType oftype text {
