@@ -18,7 +18,7 @@ class Ride(Base):
     end_lon: pd.Float64Dtype = Column(Float(64), nullable=False)
     rental_is_station: pd.BooleanDtype = Column(Boolean, nullable=False)
     rental_station_name: pd.StringDtype = Column(String(50))
-    return_is_station: pd.BooleanDtype = Column(Boolean)  # todo null Werte muessen gecleaned werden
+    return_is_station: pd.BooleanDtype = Column(Boolean, nullable=False)
     return_station_name: pd.StringDtype = Column(String(50))
 
 
@@ -26,9 +26,9 @@ class Path(Base):
     __tablename__ = "path"
 
     id: pd.Int64Dtype = Column(BigInteger, primary_key=True)
-    street_name: pd.StringDtype = Column(String(50))  # todo muessen null Werte gecleaned werden???
+    street_name: pd.StringDtype = Column(String(50))
     shape_length: pd.Float64Dtype = Column(Float(64), nullable=False)
-    path_type: pd.StringDtype = Column(String(50), nullable=False)  # todo change type to enum
+    path_type: pd.StringDtype = Column(String(50), nullable=False)
     start_east: pd.Float64Dtype = Column(Float(64), nullable=False)
     start_north: pd.Float64Dtype = Column(Float(64), nullable=False)
     end_east: pd.Float64Dtype = Column(Float(64), nullable=False)
