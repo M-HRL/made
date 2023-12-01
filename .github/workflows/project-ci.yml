@@ -53,10 +53,6 @@ jobs:
           python-version: "3.11"
           cache: "pip" # caching pip dependencies
 
-      - name: Install python dependencies
-        working-directory: "./project"
-        run: pip install -r requirements.txt
-
       - name: Run project tests
         working-directory: "./project"
-        run: pytest test
+        run: tests.sh
