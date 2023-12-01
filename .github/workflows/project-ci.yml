@@ -55,5 +55,4 @@ jobs:
 
       - name: Run project tests
         working-directory: "./project"
-        run: |
-          sudo ./tests.sh
+        run: sh ./tests.sh
