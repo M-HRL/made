@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-    - exercises/**
+      - exercise/**
 
 jobs:
   exercise-feedback:
@@ -26,6 +26,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 'lts/*'
+        cache: "npm"
 
     # Install jayvee
     - name: Set up Jayvee
@@ -37,6 +38,7 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.11
+        cache: "pip" # caching pip dependencies
 
     # Run exercise feedback
     - name: Exercise feedback

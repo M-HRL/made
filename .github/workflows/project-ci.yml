@@ -1,0 +1,58 @@
+name: Project CI
+
+on:
+  push:
+    branches-ignore:
+      - exercise/**
+
+jobs:
+  license:
+    name: License check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip" # caching pip dependencies
+
+      - name: Install python dependencies
+        working-directory: "./project"
+        run: pip install -r requirements.txt
+
+      - name: Check copyright
+        id: license_check_report
+        uses: pilosus/action-pip-license-checker@v2
+        with:
+          requirements: "./project/requirements.txt"
+          fail: "StrongCopyleft"
+          totals: true
+          headers: true
+
+      - name: Print copyright report
+        if: always()
+        run: echo "${{ steps.license_check_report.outputs.report }}"
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip" # caching pip dependencies
+
+      - name: Run project tests
+        working-directory: "./project"
+        run: sh ./tests.sh
