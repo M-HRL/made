@@ -55,4 +55,5 @@ jobs:
 
       - name: Run project tests
         working-directory: "./project"
-        run: tests.sh
+        run: |
+          ./tests.sh
