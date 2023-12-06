@@ -60,7 +60,7 @@ def load_data() -> pd.DataFrame:
         },
         na_values=["-"],
         on_bad_lines="skip",
-        encoding="iso-8859-1",
+        encoding="ISO-8859-1",
         engine="python"
     )
 
