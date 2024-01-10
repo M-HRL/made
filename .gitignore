@@ -5,3 +5,5 @@
 .code
 .obsidian
 venv
+project/cache
+project/.ipynb_checkpoints
