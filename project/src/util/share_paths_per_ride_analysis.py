@@ -16,7 +16,10 @@ def calc_share_paths_per_ride(num_paths_per_ride_df: pd.DataFrame, num_edges_per
         num_edges_per_month_df = num_edges_per_ride_df[num_edges_months_sr == m]
         rides_per_month_df = ride_df[ride_months_sr == m]
 
-        num_edges_per_month_sub_df = num_edges_per_month_df.loc[num_paths_per_month_df["ride_id"]]
+        num_edges_per_month_sub_df = num_edges_per_month_df.loc[num_paths_per_month_df.index]
+
+        num_paths_per_month_df = num_paths_per_month_df[num_edges_per_month_sub_df["num_edges"] != 0]
+        num_edges_per_month_sub_df = num_edges_per_month_sub_df[num_edges_per_month_sub_df["num_edges"] != 0]
 
         ride_share_paths_per_ride_per_month_sr = (
                 num_paths_per_month_df["num_paths"] / num_edges_per_month_sub_df["num_edges"])
