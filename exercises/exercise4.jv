@@ -1,0 +1,136 @@
+pipeline TrainstopsPipeline {
+    MowestaZipFileExtractor
+        -> ZipArchiveInterpreter
+        -> DataFilePicker
+        -> DataTextFileInterpreter
+        -> DataCsvInterpreter
+        -> DataColumnDeleter
+        -> HeaderRowDeleter
+        -> TemperaturesTableInterpreter
+        -> TempCelToFarTransformer
+        -> BatTempCelToFarTransformer
+        // -> TextToBoolTransformer
+        -> TemperaturesLoader;
+
+    block MowestaZipFileExtractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+
+    block ZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    block DataFilePicker oftype FilePicker {
+        path: "/data.csv";
+    }
+
+    block DataTextFileInterpreter oftype TextFileInterpreter {
+        encoding: "utf8";
+    }
+
+    block DataCsvInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    block DataColumnDeleter oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I, column L, column M, column N, column O];
+    }
+
+    block HeaderRowDeleter oftype RowDeleter {
+        delete: [row 1];
+    }
+
+    block TemperaturesTableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            "Geraet" oftype PosIntType,
+            "Hersteller" oftype TextType,
+            "Model" oftype TextType,
+            "Monat" oftype MonthType,
+            "Temperatur" oftype TempCelType,
+            "Batterietemperatur" oftype TempCelType,
+            "Geraet aktiv" oftype BoolType,
+        ];
+    }
+
+    block TempCelToFarTransformer oftype TableTransformer {
+        inputColumns: ["Temperatur"];
+        outputColumn: "Temperatur";
+        use: CelsiusToFahrenheit;
+    }
+
+    block BatTempCelToFarTransformer oftype TableTransformer {
+        inputColumns: ["Batterietemperatur"];
+        outputColumn: "Batterietemperatur";
+        use: CelsiusToFahrenheit;
+    }
+
+    // block TextToBoolTransformer oftype TableTransformer {
+    //     inputColumns: ["Geraet aktiv"];
+    //     outputColumn: "Geraet aktiv";
+    //     use: TextToBool;
+    // }
+
+    block TemperaturesLoader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+    }
+
+    transform CelsiusToFahrenheit {
+        from celsius oftype decimal;
+        to fahrenheit oftype decimal;
+        fahrenheit: (celsius * 9/5) + 32;
+    }
+
+    // transform TextToBool {
+    //     from textBool oftype text;
+    //     to bool oftype boolean;
+    //     bool: textBool == "Ja";
+    // }
+
+    valuetype PosIntType oftype integer {
+        constraints: [ PosIntRange ];
+    }
+
+    valuetype MonthType oftype integer {
+        constraints: [ MonthRange ];
+    }
+
+    valuetype TempCelType oftype decimal {
+        constraints: [ TempCelRange ];
+    }
+
+    valuetype TextType oftype text {
+        constraints: [ NonEmptyValues ];
+    }
+
+    valuetype BoolType oftype text {
+        constraints: [ ValidBoolValues ];
+    }
+
+    constraint PosIntRange oftype RangeConstraint {
+        lowerBound: 1;
+        lowerBoundInclusive: true;
+    }
+
+    constraint MonthRange oftype RangeConstraint {
+        lowerBound: 1;
+        lowerBoundInclusive: true;
+        upperBound: 12;
+        upperBoundInclusive: true;
+    }
+
+    constraint TempCelRange oftype RangeConstraint {
+        lowerBound: -273.15;
+        lowerBoundInclusive: true;
+    }
+
+    constraint NonEmptyValues oftype LengthConstraint {
+        minLength: 1;
+        maxLength: 100;
+    }
+
+    constraint ValidBoolValues oftype AllowlistConstraint {
+        allowlist: ["Ja", "Nein"];
+    }
+}
